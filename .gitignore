@@ -1,0 +1,31 @@
+# .NET build
+bin/
+obj/
+out/
+
+# Rider / VS / VS Code
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Angular / Node
+node_modules/
+dist/
+npm-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.*.local
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs & coverage
+*.log
+logs/
+coverage/
