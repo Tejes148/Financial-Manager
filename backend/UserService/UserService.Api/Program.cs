@@ -1,21 +1,39 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using UserService.Core.Commands.RegisterUser;
+using UserService.Core.FluentValidation;
+using UserService.Core.Interfaces;
 using UserService.Infrastructure.Persistence;
+using UserService.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
+builder.Services.AddControllers();
+
+// FluentValidation setup
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserCommandValidator>();
+
 // DbContext
 builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Dependency Injection
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// MediatR setup
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(RegisterUserCommandHandler).Assembly);
+});
+
+// Swagger for API documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -24,6 +42,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
