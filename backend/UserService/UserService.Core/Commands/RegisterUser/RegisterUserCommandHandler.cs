@@ -16,20 +16,24 @@ namespace UserService.Core.Commands.RegisterUser
         public async Task<Guid> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
             // Implementation logic for handling the command goes here.
+            var userExist = await _userRepository.ExistsByEmailAsync(request.Email, cancellationToken);
 
-            if (await _userRepository.ExistsByEmailAsync(request.Email))
+            if (userExist is not null)
                 throw new Exception("Email already available");
 
             var hassPass = PasswordHash(request.Password);
 
             var user = new User
             {
+                UserId = Guid.NewGuid(),
                 Email = request.Email,
                 PasswordHash = hassPass,
-                UserName = request.UserName
+                UserName = request.UserName,
+                CreatedAt = DateTime.UtcNow,
+                LastLoginAt = DateTime.UtcNow
             };
 
-            var Id = await _userRepository.AddUserAsync(user);
+            var Id = await _userRepository.AddUserAsync(user,cancellationToken);
 
             return Id;
         }
