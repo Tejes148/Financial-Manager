@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using UserService.Core.Commands.LoginUser;
 using UserService.Core.Commands.RegisterUser;
 using UserService.Core.FluentValidation;
 
@@ -58,8 +59,52 @@ namespace UserService.Api.Controllers
             catch (Exception ex)
             {
                 // Log the exception (logging not shown here)
-                return StatusCode(500, "An error occurred while processing your request.");
+                return StatusCode(500, "An error occurred while processing your request. " + ex.Message);
             }
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> LoginUser(LoginUserCommand LoginCommand)
+        {
+            if (LoginCommand == null)
+            {
+                return BadRequest("Request body cannot be null.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                return BadRequest(errors);
+            }
+
+            try
+            {
+                var validator = new LoginUserCommandValidator();
+                var result = validator.Validate(LoginCommand);
+                if (!result.IsValid)
+                {
+                    return BadRequest(result.Errors.Select(e => e.ErrorMessage));
+                }
+
+                var LoginUserResult = await _mediator.Send(LoginCommand);
+
+                if (!LoginUserResult.Success)
+                    return Unauthorized(LoginUserResult);
+
+                return Ok(LoginUserResult);
+
+            }
+            catch (Exception)
+            {
+               return StatusCode(500, "An error occurred while processing your request.");
+
+            }
+
+
         }
     }
 }
