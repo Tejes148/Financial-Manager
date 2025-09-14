@@ -1,15 +1,21 @@
+using Elastic.Channels;
+using Elastic.Ingest.Elasticsearch;
+using Elastic.Ingest.Elasticsearch.DataStreams;
+using Elastic.Serilog.Sinks;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
-using UserService.Infrastructure.Authentication;
 using UserService.Core.Commands.RegisterUser;
 using UserService.Core.DTOs;
 using UserService.Core.FluentValidation;
 using UserService.Core.Interfaces;
+using UserService.Infrastructure.Authentication;
 using UserService.Infrastructure.Persistence;
 using UserService.Infrastructure.Repository;
 
@@ -17,6 +23,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllers();
+
+var configuration = builder.Configuration;
+
+// Logging
+
 
 // Configuration for JwtSettings
 builder.Services.Configure<JwtSettings>(
