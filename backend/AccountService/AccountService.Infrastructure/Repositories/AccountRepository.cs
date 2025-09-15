@@ -1,6 +1,7 @@
 ﻿using AccountService.Core.Entities;
 using AccountService.Core.Interfaces;
 using AccountService.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace AccountService.Infrastructure.Repositories
 {
@@ -20,38 +21,43 @@ namespace AccountService.Infrastructure.Repositories
             return account.AccountId;
         }
 
-        // Get A/c by UserId
-        public async Task<Account?> GetAccountByAccountIdAsync(Guid AccountNumber, CancellationToken cancellationToken)
+        // Get A/c by A/c Number
+        public async Task<Account> GetAccountByAccountNumberAsync(string AccountNumber, CancellationToken cancellationToken)
         {
-            return await Task.FromResult(_context.Accounts.Where(a => a.AccountId == AccountNumber).FirstOrDefault());
+            var result = await _context.Accounts.Where(a => a.Name == AccountNumber).FirstOrDefaultAsync();
+            if (result is not null)
+            {
+                return result;
+            }
+            return null;
         }
 
         // Get All A/cs
-        public async Task<List<Account>> GetAllAccountsAsync(Guid userId, CancellationToken cancellation)
+        public async Task<IEnumerable<Account>> GetAllAccountsAsync(Guid userId, CancellationToken cancellation)
         {
-            return await Task.FromResult(_context.Accounts.ToList());
+            return await _context.Accounts.Where(x =>  x.UserId == userId).ToListAsync(cancellation);
         }
 
         // Update A/c
         public async Task<Guid> UpdateAccountAsync(Account account, CancellationToken cancellationToken)
         {
             _context.Accounts.Update(account);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return account.AccountId;
         }
 
         // Delete A/c
-        public async Task<Guid> DeleteAccountAsync(Guid accountId, CancellationToken cancellationToken)
+        public async Task<bool> DeleteAccountAsync(string AccountNumber, CancellationToken cancellationToken)
         {
           
-            var account = await GetAccountByAccountIdAsync(accountId, cancellationToken);
+            var account = await GetAccountByAccountNumberAsync(AccountNumber, cancellationToken);
             if (account != null)
             {
                 _context.Accounts.Remove(account);
-                await _context.SaveChangesAsync();
-                return accountId;
+                await _context.SaveChangesAsync(cancellationToken);
+                return true;
             }
-            return Guid.Empty;
+            return false;
         }
 
         public void Dispose()

@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AccountService.Core.Entities;
+using MediatR;
 
 namespace AccountService.Core.AccountAuditCore.Queries
 {
-    internal class GetAuditLogsByAccountIdQuery
+    public class GetAuditLogsByAccountIdQuery : IRequest<List<AccountAudit>>
     {
+        public Guid AccountId { get; set; }
+
+        public GetAuditLogsByAccountIdQuery(Guid accountId)
+        {
+             AccountId = accountId;
+        }
     }
 }
