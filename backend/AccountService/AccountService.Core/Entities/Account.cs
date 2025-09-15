@@ -33,5 +33,9 @@
 
         public virtual ICollection<LinkedBankAccount> LinkedBankAccounts { get; set; } = new List<LinkedBankAccount>();
 
+        public static Account Empty()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

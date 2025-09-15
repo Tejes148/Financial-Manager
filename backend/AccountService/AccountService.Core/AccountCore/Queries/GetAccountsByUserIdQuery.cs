@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AccountService.Core.Entities;
+using MediatR;
 
 namespace AccountService.Core.AccountCore.Queries
 {
-    internal class GetAccountsByUserIdQuery
+    public class GetAccountsByAccountNumberQuery : IRequest<Account>
     {
+        public string AccountNumber {  get; set; }
+        public GetAccountsByAccountNumberQuery(string accountNumber)
+        {
+            AccountNumber = accountNumber;
+        }
     }
 }
