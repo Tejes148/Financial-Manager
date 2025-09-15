@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
 
 namespace AccountService.Core.LinkedBankCore.Command
 {
-    internal class LinkBankCommand
-    {
-    }
+    public record LinkBankAccountCommand(
+      Guid AccountId,
+      string Provider, // Bank Name
+      string? ProviderAccountId, // Bank ref Number
+      string? RefreshToken,
+      string? Metadata // extra field or info like servicea/c
+  ) : IRequest<Guid>;
 }

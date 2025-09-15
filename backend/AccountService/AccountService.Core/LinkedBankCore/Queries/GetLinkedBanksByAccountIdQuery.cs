@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AccountService.Core.Entities;
+using MediatR;
 
 namespace AccountService.Core.LinkedBankCore.Queries
 {
-    internal class GetLinkedBanksByAccountIdQuery
+    public class GetLinkedBanksByAccountIdQuery : IRequest<LinkedBankAccount>
     {
+        public Guid LinkedAccountId { get; set; }
     }
 }
